@@ -48,4 +48,9 @@ export class CartService {
   removeProductFromCart(cartItemId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/items/${cartItemId}`);
   }
+
+  // Método para limpiar el carrito
+  clearCart(cartId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${cartId}/clear`);
+  }
 }

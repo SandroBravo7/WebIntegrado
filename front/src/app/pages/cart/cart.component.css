@@ -1,0 +1,21 @@
+.btn-custom-checkout {
+    background-image: linear-gradient(to right, #28a745 0%, #218838 51%, #1e7e34 100%);
+    border: none;
+    color: white;
+    padding: 15px 45px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    box-shadow: 0 0 20px #eee;
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .btn-custom-checkout:hover {
+    background-position: right center; /* change the direction of the change here */
+    color: #fff;
+    text-decoration: none;
+  }
+  

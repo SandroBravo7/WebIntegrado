@@ -154,4 +154,15 @@ public class CartController {
         }
     }
 
+    // Endpoint para limpiar el carrito
+    @DeleteMapping("/{cartId}/clear")
+    public ResponseEntity<?> clearCart(@PathVariable Integer cartId) {
+        try {
+            cartService.clearCart(cartId);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body("Cart not found: " + e.getMessage());
+        }
+    }
+
 }

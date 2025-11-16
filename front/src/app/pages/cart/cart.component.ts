@@ -134,6 +134,7 @@ export class CartComponent implements OnInit {
   
   // Modifica el método checkout para recibir el orderId como argumento opcional
   checkout(): void {
+    alert('Procesando su compra...');
     const totalAmount = this.getTotalCost();
     if (totalAmount <= 0) {
       alert('El total del carrito debe ser mayor a 0 para realizar la compra.');
@@ -148,7 +149,18 @@ export class CartComponent implements OnInit {
     }
   
     this.saleService.createSale(+userId, this.cartItems, totalAmount).subscribe({
-      next: (sale) => console.log('Venta creada exitosamente:', sale),
+      next: (sale) => {
+        console.log('Venta creada exitosamente:', sale);
+        alert('¡Su compra ha sido realizada con éxito!');
+        this.cartService.clearCart(this.cartId).subscribe({
+          next: () => {
+            this.cartItems = []; // Limpiar el carrito en el frontend
+          },
+          error: (err) => {
+            console.error('Error al limpiar el carrito:', err);
+          }
+        });
+      },
       error: (err) => {
         console.error('Error al realizar la venta:', err);
         alert('Hubo un error al procesar la venta. Inténtalo de nuevo.');

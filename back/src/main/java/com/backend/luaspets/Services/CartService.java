@@ -231,6 +231,14 @@ public class CartService {
         cartItemRepository.flush();
     }
 
+    // Método para limpiar el carrito
+    @org.springframework.transaction.annotation.Transactional
+    public void clearCart(Integer cartId) {
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        cartItemRepository.deleteAllByCart(cart);
+    }
+
     // Método auxiliar para obtener un producto según su tipo y ID
     private Product getProductByTypeAndId(String productType, Integer productId) {
         if (productType == null || productId == null) {

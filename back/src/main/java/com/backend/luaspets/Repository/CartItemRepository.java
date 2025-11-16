@@ -10,5 +10,7 @@ import com.backend.luaspets.Model.CartItem;
 public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
 
      List<CartItem> findByCart(Cart cart);
+
+     void deleteAllByCart(Cart cart);
      
 }

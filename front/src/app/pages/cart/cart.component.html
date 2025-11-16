@@ -26,6 +26,9 @@
   <div class="mt-3 text-end">
     <h5>Total: <span class="fw-bold">S/{{ getTotalCost() | number: '1.2-2' }}</span></h5>
   </div>
+  <div class="text-center mt-4">
+    <button class="btn btn-success btn-lg btn-custom-checkout" (click)="checkout()">Compra Estandar</button>
+  </div>
   <div id="paypal-button-container" class="mt-4 text-center"></div>
   <ng-template #emptyCart>
     <div class="text-center">
@@ -34,7 +37,7 @@
     </div>
   </ng-template>
 
- <script src="https://www.paypal.com/sdk/js?client-id=AZI4NjEvyLgQYTTZ1s_EmTmo-HAp4DtKaVnzc7h8Ea30gAmLH4aNs35yJYtYmJIH_CBjh3O9d2oBQCy-&currency=PEN"></script>
+ <script src="https://www.paypal.com/sdk/js?client-id=AUWS8PKNZziBEd7CcW-018aCCo-D5BXSj911gifdhp8Oypxry5CL_a0OkC5sgppnq6vuZBVWwS-uZZd9-&currency=PEN"></script>
 </div>
 
   <app-footer></app-footer>
