@@ -56,7 +56,7 @@ public class CartService {
     }
 
     // Método para obtener un carrito por userId
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @org.springframework.transaction.annotation.Transactional
     public Cart getCartByUserId(Integer userId) {
         // Obtener el usuario primero
         com.backend.luaspets.User.User user = userRepository.findById(userId)

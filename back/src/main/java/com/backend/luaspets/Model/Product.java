@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
@@ -24,7 +26,13 @@ import lombok.Setter;
 @Getter 
 @Setter 
 @NoArgsConstructor 
-@AllArgsConstructor 
+@AllArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "productType")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = Food.class, name = "FOOD"),
+    @JsonSubTypes.Type(value = Medicine.class, name = "MEDICINE"),
+    @JsonSubTypes.Type(value = Accessory.class, name = "ACCESSORY")
+})
 public abstract class Product {
 
     @Id

@@ -28,6 +28,11 @@ export class CartService {
     return this.http.post<CartItem>(`${this.baseUrl}/${cartId}/items`, itemData);
   }
 
+  // Método para agregar un producto al carrito por userId
+  addItemToCartByUserId(userId: number, itemData: { productId: number; productType: string; quantity: number }): Observable<CartItem> {
+    return this.http.post<CartItem>(`${this.baseUrl}/user/${userId}/items`, itemData);
+  }
+
   // Método para obtener todos los productos de un carrito
   getAllItemsInCart(cartId: number): Observable<CartItem[]> {
     return this.http.get<CartItem[]>(`${this.baseUrl}/${cartId}/items`);

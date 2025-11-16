@@ -67,8 +67,8 @@ export class ShopComponent implements OnInit{
     const userId = this.loginService.userId;
     if (!userId) return;
 
-    const cartId = parseInt(userId, 10);
-    if (isNaN(cartId)) return;
+    const userIdInt = parseInt(userId, 10);
+    if (isNaN(userIdInt)) return;
 
     const itemData = {
       productId: product.id,
@@ -76,20 +76,14 @@ export class ShopComponent implements OnInit{
       quantity
     };
 
-    this.cartService.addItemToCart(cartId, itemData).subscribe({
+    this.cartService.addItemToCartByUserId(userIdInt, itemData).subscribe({
       next: () => {},
       error: () => {}
     });
   }
   
-getProductType(product: any): string {
-  if (product.hasOwnProperty('price')) {
-    if (product.image_url.includes('alimento')) return 'FOOD';
-    if (product.image_url.includes('accesorio')) return 'ACCESSORY';
-    if (product.image_url.includes('medicamento')) return 'MEDICINE';
+  getProductType(product: any): string {
+    return product.productType || 'UNKNOWN';
   }
-  return 'UNKNOWN';
-}
-
   
 }

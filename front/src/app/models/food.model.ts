@@ -9,4 +9,5 @@ export interface Food {
     image_url?: string;
     expiration_date?: Date; // Tipo string para manejar formato de fecha
     created_at?: Date;
+    productType?: string;
   }

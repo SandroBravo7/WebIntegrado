@@ -1,5 +1,5 @@
 export interface Medicine {
-    id?: number; // Opcional, ya que puede no estar presente en un nuevo objeto antes de guardarse en la base de datos
+    id?: number;
     name: string;
     brand?: string;
     description?: string;
@@ -7,6 +7,8 @@ export interface Medicine {
     stock: number;
     category?: string;
     image_url?: string;
-    expiration_date?: Date; // Tipo string para manejar formato de fecha
+    expiration_date?: Date;
     created_at?: Date;
+    productType?: string;
   }
+  
