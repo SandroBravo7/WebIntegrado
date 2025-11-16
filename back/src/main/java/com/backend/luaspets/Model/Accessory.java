@@ -12,8 +12,7 @@ import lombok.NoArgsConstructor;
 @DiscriminatorValue("ACCESSORY") // Usa mayúsculas para coincidir con la DB
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Builder
 public class Accessory extends Product {
 
