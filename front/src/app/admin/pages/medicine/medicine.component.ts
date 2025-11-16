@@ -58,7 +58,15 @@ export class MedicineComponent implements OnInit{
   // Método para agregar un nuevo alimento
   addMedicine(): void {
     if (this.medicineForm.valid) {
-      this.medicineService.createMedicine(this.medicineForm.value).subscribe({
+      const medicineData = this.medicineForm.value;
+      medicineData.productType = 'MEDICINE'; // Añadir el tipo de producto
+      if (medicineData.expiration_date === '') {
+        medicineData.expiration_date = null;
+      }
+      if (medicineData.created_at === '') {
+        medicineData.created_at = null;
+      }
+      this.medicineService.createMedicine(medicineData).subscribe({
         next: () => {
           this.loadMedicines(); // Recargar la lista después de agregar
           this.resetForm(); // Reiniciar el formulario
@@ -92,7 +100,14 @@ deleteMedicine(id: number | undefined): void {
 // Método para actualizar el alimento
 updateMedicine(): void {
   if (this.selectedMedicine) {
-    this.medicineService.updateMedicine(this.selectedMedicine.id!, this.medicineForm.value).subscribe({
+    const medicineData = this.medicineForm.value;
+    if (medicineData.expiration_date === '') {
+      medicineData.expiration_date = null;
+    }
+    if (medicineData.created_at === '') {
+      medicineData.created_at = null;
+    }
+    this.medicineService.updateMedicine(this.selectedMedicine.id!, medicineData).subscribe({
       next: () => {
         this.loadMedicines(); // Recargar la lista después de actualizar
         this.resetForm(); // Reiniciar el formulario

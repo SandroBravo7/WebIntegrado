@@ -59,7 +59,15 @@ export class FoodComponent implements OnInit {
   // Método para agregar un nuevo alimento
   addFood(): void {
     if (this.foodForm.valid) {
-      this.foodService.createFood(this.foodForm.value).subscribe({
+      const foodData = this.foodForm.value;
+      foodData.productType = 'FOOD'; // Añadir el tipo de producto
+      if (foodData.expiration_date === '') {
+        foodData.expiration_date = null;
+      }
+      if (foodData.created_at === '') {
+        foodData.created_at = null;
+      }
+      this.foodService.createFood(foodData).subscribe({
         next: () => {
           this.loadFoods(); // Recargar la lista después de agregar
           this.resetForm(); // Reiniciar el formulario
@@ -92,7 +100,14 @@ export class FoodComponent implements OnInit {
   // Método para actualizar el alimento
   updateFood(): void {
     if (this.selectedFood) {
-      this.foodService.updateFood(this.selectedFood.id!, this.foodForm.value).subscribe({
+      const foodData = this.foodForm.value;
+      if (foodData.expiration_date === '') {
+        foodData.expiration_date = null;
+      }
+      if (foodData.created_at === '') {
+        foodData.created_at = null;
+      }
+      this.foodService.updateFood(this.selectedFood.id!, foodData).subscribe({
         next: () => {
           this.loadFoods(); // Recargar la lista después de actualizar
           this.resetForm(); // Reiniciar el formulario

@@ -58,7 +58,15 @@ export class AccesoriesComponent implements OnInit {
   // Método para agregar un nuevo alimento
   addAccessories(): void {
     if (this.accessoriesForm.valid) {
-      this.accessoriesService.createAccessories(this.accessoriesForm.value).subscribe({
+      const accessoriesData = this.accessoriesForm.value;
+      accessoriesData.productType = 'ACCESSORY'; // Añadir el tipo de producto
+      if (accessoriesData.expiration_date === '') {
+        accessoriesData.expiration_date = null;
+      }
+      if (accessoriesData.created_at === '') {
+        accessoriesData.created_at = null;
+      }
+      this.accessoriesService.createAccessories(accessoriesData).subscribe({
         next: () => {
           this.loadAccessoriess(); // Recargar la lista después de agregar
           this.resetForm(); // Reiniciar el formulario
@@ -92,7 +100,14 @@ deleteAccessories(id: number | undefined): void {
 // Método para actualizar el alimento
 updateAccessories(): void {
   if (this.selectedAccessories) {
-    this.accessoriesService.updateAccessories(this.selectedAccessories.id!, this.accessoriesForm.value).subscribe({
+    const accessoriesData = this.accessoriesForm.value;
+    if (accessoriesData.expiration_date === '') {
+      accessoriesData.expiration_date = null;
+    }
+    if (accessoriesData.created_at === '') {
+      accessoriesData.created_at = null;
+    }
+    this.accessoriesService.updateAccessories(this.selectedAccessories.id!, accessoriesData).subscribe({
       next: () => {
         this.loadAccessoriess(); // Recargar la lista después de actualizar
         this.resetForm(); // Reiniciar el formulario
