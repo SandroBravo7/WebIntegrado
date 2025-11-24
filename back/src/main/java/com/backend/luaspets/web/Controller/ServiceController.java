@@ -1,8 +1,9 @@
-package com.backend.luaspets.User;
+package com.backend.luaspets.web.Controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -17,77 +18,93 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.luaspets.persistence.Model.Cart;
-
-import lombok.RequiredArgsConstructor;
+import com.backend.luaspets.persistence.Model.Services;
+import com.backend.luaspets.domain.Services.ServiceService;
 
 @RestController
-@RequestMapping(value = "/api/v1/user")
-@RequiredArgsConstructor
+@RequestMapping("/services")
 @CrossOrigin(origins = { "http://localhost:4200" })
-public class UserController {
+public class ServiceController {
+    
+    private final ServiceService servicesService;
 
-    private final UserService userService;
-
-
+    @Autowired
+    public ServiceController(ServiceService servicesService){
+        this.servicesService = servicesService;
+    }
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<Services>> getAllServices(){
+        List<Services> service = servicesService.getAllServices();
+        return ResponseEntity.ok(service);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/{id}")
+    public ResponseEntity<Services> getServicesById(@PathVariable Integer id){
+        Optional<Services> service = servicesService.getServicesById(id);
+        return service.map(ResponseEntity::ok)
+                            .orElseGet(()-> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    /* ---------------------- */
-
-    @GetMapping(value = "{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Integer id) {
-        UserDTO userDTO = userService.getUser(id);
-        if (userDTO == null) {
-            return ResponseEntity.notFound().build();
+    @PostMapping
+    public ResponseEntity<Services> createService(@RequestBody Services service) {
+        try {
+            Services newService = servicesService.saveServices(service);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newService);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null); //Servicio ya existe
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        return ResponseEntity.ok(userDTO);
+    }
+    
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Services> updateService(@PathVariable Integer id, @RequestBody Services serviceDetails) {
+        try {
+            Services updatedServices = servicesService.updateServices(id, serviceDetails);
+            return ResponseEntity.ok(updatedServices);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
-    @PutMapping(value = "{id}")
-    public ResponseEntity<UserResponse> updateUser(@RequestBody UserRequest userRequest) {
-        return ResponseEntity.ok(userService.updateUser(userRequest));
+    // Endpoint para eliminar un producto por su ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteService(@PathVariable Integer id) {
+        try {
+            servicesService.deleteServices(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
-
-    @GetMapping("/{id}/cart")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable Integer id) {
-        Cart cart = userService.getCartByUserId(id);
-        return ResponseEntity.ok(cart);
-    }
-
-
+ /* excel */
     @GetMapping("/export.xlsx")
-    public ResponseEntity<byte[]> exportSaleData() {
+    public ResponseEntity<byte[]> exportFoodData() {
     try (Workbook workbook = new XSSFWorkbook()) {
-        Sheet sheet = workbook.createSheet("Usuarios");
+        Sheet sheet = workbook.createSheet("Mascotas");
 
         // Título
         Row titleRow = sheet.createRow(0);
         Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("Lista de Usuarios");
+        titleCell.setCellValue("Lista de Mascotas");
 
         // Estilo del título
         CellStyle titleStyle = workbook.createCellStyle();
@@ -102,7 +119,7 @@ public class UserController {
 
         // Aplicar el estilo al título y fusionar celdas
         titleCell.setCellStyle(titleStyle);
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 6)); // Fusiona desde la columna 0 a la columna 9
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 3)); // Fusiona desde la columna 0 a la columna 9
 
         // Estilo para el encabezado
         CellStyle headerStyle = workbook.createCellStyle();
@@ -133,7 +150,7 @@ public class UserController {
         currencyStyle.setDataFormat(workbook.createDataFormat().getFormat("$#,##0.00"));
 
         // Encabezados
-        String[] headers = {"ID", "Correo", "DNI", "Nombre Completo", "Dirección", "Número Celular", "Permisos"};
+        String[] headers = {"ID", "Nombre", "Costo", "Tamaño mascota"};
         Row headerRow = sheet.createRow(1); // Mover el encabezado a la fila 1, debajo del título
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
@@ -143,38 +160,27 @@ public class UserController {
         }
 
         // Datos
-        List<UserDTO> users = userService.getAllUsers();
+        List<Services> services = servicesService.getAllServices();
         int rowIndex = 2; // Comienza en la fila 2, después del título y el encabezado
-        for (UserDTO user : users) {
+        for (Services service : services) {
             Row row = sheet.createRow(rowIndex++);
 
             Cell cellId = row.createCell(0);
-            cellId.setCellValue(user.getId());
+            cellId.setCellValue(service.getId());
             cellId.setCellStyle(dataStyle);
 
             Cell cellName = row.createCell(1);
-            cellName.setCellValue(user.getUsername());
+            cellName.setCellValue(service.getName());
             cellName.setCellStyle(dataStyle);
 
             Cell cellBrand = row.createCell(2);
-            cellBrand.setCellValue(user.getDni());
+            cellBrand.setCellValue(service.getCost());
             cellBrand.setCellStyle(dataStyle);
 
             Cell cellDescription = row.createCell(3);
-            cellDescription.setCellValue(user.getFullName());
+            cellDescription.setCellValue(service.getPetSize());
             cellDescription.setCellStyle(dataStyle);
 
-            Cell cellPrice = row.createCell(4);
-            cellPrice.setCellValue(user.getAddress());
-            cellPrice.setCellStyle(currencyStyle);
-
-            Cell cellPhone = row.createCell(5);
-            cellPhone.setCellValue(user.getPhoneNumber());
-            cellPhone.setCellStyle(currencyStyle);
-            
-            Cell cellRole = row.createCell(6);
-            cellRole.setCellValue(user.getRole());
-            cellRole.setCellStyle(currencyStyle);
         }
 
         // Ajustar ancho de columnas manualmente en caso de que autoSizeColumn no sea suficiente

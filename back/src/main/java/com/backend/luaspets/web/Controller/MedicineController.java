@@ -1,8 +1,4 @@
-package com.backend.luaspets.User;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
+package com.backend.luaspets.web.Controller;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -17,77 +13,100 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.luaspets.persistence.Model.Cart;
+import com.backend.luaspets.persistence.Model.Medicine;
+import com.backend.luaspets.domain.Services.MedicineService;
 
-import lombok.RequiredArgsConstructor;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
 
 @RestController
-@RequestMapping(value = "/api/v1/user")
-@RequiredArgsConstructor
+@RequestMapping("/api/v1/medicine")
 @CrossOrigin(origins = { "http://localhost:4200" })
-public class UserController {
+public class MedicineController {
+    private final MedicineService medicineService;
 
-    private final UserService userService;
+    @Autowired
+    public MedicineController(MedicineService medicineService) {
+        this.medicineService = medicineService;
+    }
 
-
-
+    // Endpoint para obtener todos los productos
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<Medicine>> getAllMedicine() {
+        List<Medicine> medicines = medicineService.getAllMedicine();
+        return ResponseEntity.ok(medicines);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    // Endpoint para obtener un producto por su ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Medicine> getMedicineById(@PathVariable Integer id) {
+        Optional<Medicine> medicine = medicineService.getMedicineById(id);
+        return medicine.map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    /* ---------------------- */
-
-    @GetMapping(value = "{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Integer id) {
-        UserDTO userDTO = userService.getUser(id);
-        if (userDTO == null) {
-            return ResponseEntity.notFound().build();
+    // Endpoint para agregar un nuevo producto
+    @PostMapping
+    public ResponseEntity<Medicine> createMedicine(@RequestBody Medicine medicine) {
+        try {
+            Medicine newMedicine = medicineService.saveMedicine(medicine);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newMedicine);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // Producto ya existe
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        return ResponseEntity.ok(userDTO);
     }
 
-    @PutMapping(value = "{id}")
-    public ResponseEntity<UserResponse> updateUser(@RequestBody UserRequest userRequest) {
-        return ResponseEntity.ok(userService.updateUser(userRequest));
+    // Endpoint para actualizar un producto existente
+    @PutMapping("/{id}")
+    public ResponseEntity<Medicine> updateMedicine(@PathVariable Integer id, @RequestBody Medicine medicineDetails) {
+        try {
+            Medicine updatedMedicine = medicineService.updateMedicine(id, medicineDetails);
+            return ResponseEntity.ok(updatedMedicine);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
-
-    @GetMapping("/{id}/cart")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable Integer id) {
-        Cart cart = userService.getCartByUserId(id);
-        return ResponseEntity.ok(cart);
+    // Endpoint para eliminar un producto por su ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMedicine(@PathVariable Integer id) {
+        try {
+            medicineService.deleteMedicine(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
-
 
     @GetMapping("/export.xlsx")
-    public ResponseEntity<byte[]> exportSaleData() {
+    public ResponseEntity<byte[]> exportFoodData() {
     try (Workbook workbook = new XSSFWorkbook()) {
-        Sheet sheet = workbook.createSheet("Usuarios");
+        Sheet sheet = workbook.createSheet("Medicamentos");
 
         // Título
         Row titleRow = sheet.createRow(0);
         Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("Lista de Usuarios");
+        titleCell.setCellValue("Lista del Almacén de Medicamentos Para Mascotas");
 
         // Estilo del título
         CellStyle titleStyle = workbook.createCellStyle();
@@ -102,7 +121,7 @@ public class UserController {
 
         // Aplicar el estilo al título y fusionar celdas
         titleCell.setCellStyle(titleStyle);
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 6)); // Fusiona desde la columna 0 a la columna 9
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 9)); // Fusiona desde la columna 0 a la columna 9
 
         // Estilo para el encabezado
         CellStyle headerStyle = workbook.createCellStyle();
@@ -133,7 +152,7 @@ public class UserController {
         currencyStyle.setDataFormat(workbook.createDataFormat().getFormat("$#,##0.00"));
 
         // Encabezados
-        String[] headers = {"ID", "Correo", "DNI", "Nombre Completo", "Dirección", "Número Celular", "Permisos"};
+        String[] headers = {"ID", "Nombre", "Marca", "Descripción", "Precio", "Stock", "Categoría", "Imagen URL", "Fecha de Registro", "Fecha de Expiración"};
         Row headerRow = sheet.createRow(1); // Mover el encabezado a la fila 1, debajo del título
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
@@ -143,38 +162,50 @@ public class UserController {
         }
 
         // Datos
-        List<UserDTO> users = userService.getAllUsers();
+        List<Medicine> medicines = medicineService.getAllMedicine();
         int rowIndex = 2; // Comienza en la fila 2, después del título y el encabezado
-        for (UserDTO user : users) {
+        for (Medicine medicine : medicines) {
             Row row = sheet.createRow(rowIndex++);
 
             Cell cellId = row.createCell(0);
-            cellId.setCellValue(user.getId());
+            cellId.setCellValue(medicine.getId());
             cellId.setCellStyle(dataStyle);
 
             Cell cellName = row.createCell(1);
-            cellName.setCellValue(user.getUsername());
+            cellName.setCellValue(medicine.getName());
             cellName.setCellStyle(dataStyle);
 
             Cell cellBrand = row.createCell(2);
-            cellBrand.setCellValue(user.getDni());
+            cellBrand.setCellValue(medicine.getBrand() != null ? medicine.getBrand() : "");
             cellBrand.setCellStyle(dataStyle);
 
             Cell cellDescription = row.createCell(3);
-            cellDescription.setCellValue(user.getFullName());
+            cellDescription.setCellValue(medicine.getDescription() != null ? medicine.getDescription() : "");
             cellDescription.setCellStyle(dataStyle);
 
             Cell cellPrice = row.createCell(4);
-            cellPrice.setCellValue(user.getAddress());
+            cellPrice.setCellValue(medicine.getPrice() != null ? medicine.getPrice().doubleValue() : 0.0);
             cellPrice.setCellStyle(currencyStyle);
 
-            Cell cellPhone = row.createCell(5);
-            cellPhone.setCellValue(user.getPhoneNumber());
-            cellPhone.setCellStyle(currencyStyle);
-            
-            Cell cellRole = row.createCell(6);
-            cellRole.setCellValue(user.getRole());
-            cellRole.setCellStyle(currencyStyle);
+            Cell cellStock = row.createCell(5);
+            cellStock.setCellValue(medicine.getStock() != null ? medicine.getStock() : 0);
+            cellStock.setCellStyle(dataStyle);
+
+            Cell cellCategory = row.createCell(6);
+            cellCategory.setCellValue(medicine.getCategory() != null ? medicine.getCategory() : "");
+            cellCategory.setCellStyle(dataStyle);
+
+            Cell cellImageUrl = row.createCell(7);
+            cellImageUrl.setCellValue(medicine.getImage_url() != null ? medicine.getImage_url() : "");
+            cellImageUrl.setCellStyle(dataStyle);
+
+            Cell cellCreatedAt = row.createCell(8);
+            cellCreatedAt.setCellValue(medicine.getCreated_at() != null ? medicine.getCreated_at().toString() : "");
+            cellCreatedAt.setCellStyle(dataStyle);
+
+            Cell cellExpirationDate = row.createCell(9);
+            cellExpirationDate.setCellValue(medicine.getExpiration_date() != null ? medicine.getExpiration_date().toString() : "");
+            cellExpirationDate.setCellStyle(dataStyle);
         }
 
         // Ajustar ancho de columnas manualmente en caso de que autoSizeColumn no sea suficiente
@@ -199,5 +230,5 @@ public class UserController {
         return ResponseEntity.status(500).build();
     }
 }
-
+    
 }

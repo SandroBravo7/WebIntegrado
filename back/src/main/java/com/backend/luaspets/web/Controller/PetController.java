@@ -1,4 +1,4 @@
-package com.backend.luaspets.User;
+package com.backend.luaspets.web.Controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,77 +17,98 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.luaspets.persistence.Model.Cart;
-
-import lombok.RequiredArgsConstructor;
+import com.backend.luaspets.domain.DTO.PetRequest;
+import com.backend.luaspets.domain.DTO.PetResponse;
+import com.backend.luaspets.persistence.Model.Pet;
+import com.backend.luaspets.domain.Services.PetService;
+import com.backend.luaspets.persistence.mapper.PetMapper;
 
 @RestController
-@RequestMapping(value = "/api/v1/user")
-@RequiredArgsConstructor
+@RequestMapping("/pets")
 @CrossOrigin(origins = { "http://localhost:4200" })
-public class UserController {
+public class PetController {
+    
+    @Autowired
+    private PetService petService;
 
-    private final UserService userService;
-
-
+    @Autowired
+    private PetMapper petMapper;
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<PetResponse>> getAllPets() {
+        List<Pet> pets = petService.getAllPets();
+        List<PetResponse> responses = pets.stream()
+            .map(petMapper::petToPetResponse)
+            .toList();
+
+        return ResponseEntity.ok(responses);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
-        userService.deleteUser(id);
+    // Obtener una mascota por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<PetResponse> getPetById(@PathVariable Integer id) {
+        PetResponse response = petService.getPetById(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<PetResponse> createPet(@RequestBody PetRequest request){
+        Pet pet = petService.createPet(request);
+        PetResponse response = petMapper.petToPetResponse(pet);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // Obtener todas las mascotas de un usuario
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<PetResponse>> getPetsByUserId(@PathVariable Integer userId) {
+        List<Pet> pets = petService.getPetsByUserId(userId);
+        List<PetResponse> responses = pets.stream()
+            .map(petMapper::petToPetResponse)
+            .toList();
+
+        return ResponseEntity.ok(responses);
+    }
+
+    // Actualizar los campos de una mascota por su ID
+    @PutMapping("/{petId}")
+    public ResponseEntity<PetResponse> updatePet(@PathVariable Integer petId, @RequestBody PetRequest request) {
+        Pet updatedPet = petService.updatePet(petId, request);
+        PetResponse response = petMapper.petToPetResponse(updatedPet);
+        return ResponseEntity.ok(response);
+    }
+
+    // Eliminar una mascota por su ID
+    @DeleteMapping("/{petId}")
+    public ResponseEntity<Void> deletePetById(@PathVariable Integer petId) {
+        petService.deletePetById(petId);
         return ResponseEntity.noContent().build();
     }
 
-    /* ---------------------- */
-
-    @GetMapping(value = "{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Integer id) {
-        UserDTO userDTO = userService.getUser(id);
-        if (userDTO == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(userDTO);
-    }
-
-    @PutMapping(value = "{id}")
-    public ResponseEntity<UserResponse> updateUser(@RequestBody UserRequest userRequest) {
-        return ResponseEntity.ok(userService.updateUser(userRequest));
-    }
-
-
-    @GetMapping("/{id}/cart")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable Integer id) {
-        Cart cart = userService.getCartByUserId(id);
-        return ResponseEntity.ok(cart);
-    }
-
-
+     /* excel */
     @GetMapping("/export.xlsx")
-    public ResponseEntity<byte[]> exportSaleData() {
+    public ResponseEntity<byte[]> exportFoodData() {
     try (Workbook workbook = new XSSFWorkbook()) {
-        Sheet sheet = workbook.createSheet("Usuarios");
+        Sheet sheet = workbook.createSheet("Mascotas");
 
         // Título
         Row titleRow = sheet.createRow(0);
         Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("Lista de Usuarios");
+        titleCell.setCellValue("Lista de Mascotas");
 
         // Estilo del título
         CellStyle titleStyle = workbook.createCellStyle();
@@ -102,7 +123,7 @@ public class UserController {
 
         // Aplicar el estilo al título y fusionar celdas
         titleCell.setCellStyle(titleStyle);
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 6)); // Fusiona desde la columna 0 a la columna 9
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 8)); // Fusiona desde la columna 0 a la columna 9
 
         // Estilo para el encabezado
         CellStyle headerStyle = workbook.createCellStyle();
@@ -133,7 +154,7 @@ public class UserController {
         currencyStyle.setDataFormat(workbook.createDataFormat().getFormat("$#,##0.00"));
 
         // Encabezados
-        String[] headers = {"ID", "Correo", "DNI", "Nombre Completo", "Dirección", "Número Celular", "Permisos"};
+        String[] headers = {"ID", "Nombre", "Especie", "Raza", "Tamaño", "Peso", "Edad", "Género", "ID Dueño"};
         Row headerRow = sheet.createRow(1); // Mover el encabezado a la fila 1, debajo del título
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
@@ -143,38 +164,47 @@ public class UserController {
         }
 
         // Datos
-        List<UserDTO> users = userService.getAllUsers();
+        List<Pet> pets = petService.getAllPets();
         int rowIndex = 2; // Comienza en la fila 2, después del título y el encabezado
-        for (UserDTO user : users) {
+        for (Pet pet : pets) {
             Row row = sheet.createRow(rowIndex++);
 
             Cell cellId = row.createCell(0);
-            cellId.setCellValue(user.getId());
+            cellId.setCellValue(pet.getId());
             cellId.setCellStyle(dataStyle);
 
             Cell cellName = row.createCell(1);
-            cellName.setCellValue(user.getUsername());
+            cellName.setCellValue(pet.getName());
             cellName.setCellStyle(dataStyle);
 
             Cell cellBrand = row.createCell(2);
-            cellBrand.setCellValue(user.getDni());
+            cellBrand.setCellValue(pet.getSpecies());
             cellBrand.setCellStyle(dataStyle);
 
             Cell cellDescription = row.createCell(3);
-            cellDescription.setCellValue(user.getFullName());
+            cellDescription.setCellValue(pet.getBreed());
             cellDescription.setCellStyle(dataStyle);
 
             Cell cellPrice = row.createCell(4);
-            cellPrice.setCellValue(user.getAddress());
+            cellPrice.setCellValue(pet.getSize());
             cellPrice.setCellStyle(currencyStyle);
 
-            Cell cellPhone = row.createCell(5);
-            cellPhone.setCellValue(user.getPhoneNumber());
-            cellPhone.setCellStyle(currencyStyle);
-            
-            Cell cellRole = row.createCell(6);
-            cellRole.setCellValue(user.getRole());
-            cellRole.setCellStyle(currencyStyle);
+            Cell cellStock = row.createCell(5);
+            cellStock.setCellValue(pet.getWeight());
+            cellStock.setCellStyle(dataStyle);
+
+            Cell cellCategory = row.createCell(6);
+            cellCategory.setCellValue(pet.getAge());
+            cellCategory.setCellStyle(dataStyle);
+
+            Cell cellImageUrl = row.createCell(7);
+            cellImageUrl.setCellValue(pet.getGender());
+            cellImageUrl.setCellStyle(dataStyle);
+
+            Cell cellCreatedAt = row.createCell(8);
+            cellCreatedAt.setCellValue(pet.getOwner().getId());
+            cellCreatedAt.setCellStyle(dataStyle);
+
         }
 
         // Ajustar ancho de columnas manualmente en caso de que autoSizeColumn no sea suficiente

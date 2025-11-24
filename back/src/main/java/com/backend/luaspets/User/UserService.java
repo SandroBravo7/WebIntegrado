@@ -5,8 +5,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.backend.luaspets.Model.Cart;
-import com.backend.luaspets.mapper.UserMapper;
+import com.backend.luaspets.persistence.Model.Cart;
+import com.backend.luaspets.persistence.mapper.UserMapper;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,9 @@
-package com.backend.luaspets.User;
+package com.backend.luaspets.web.Controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -17,77 +18,83 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.luaspets.persistence.Model.Cart;
-
-import lombok.RequiredArgsConstructor;
+import com.backend.luaspets.domain.DTO.SaleRequest;
+import com.backend.luaspets.domain.DTO.SaleDetailResponse;
+import com.backend.luaspets.domain.DTO.SaleResponse;
+import com.backend.luaspets.persistence.Model.Sale;
+import com.backend.luaspets.domain.Services.SaleService;
+import com.backend.luaspets.User.User;
+import com.backend.luaspets.User.UserRepository;
+import com.backend.luaspets.persistence.mapper.SaleMapper;
+import com.backend.luaspets.persistence.mapper.SaleDetailMapper;
 
 @RestController
-@RequestMapping(value = "/api/v1/user")
-@RequiredArgsConstructor
+@RequestMapping("/sales")
 @CrossOrigin(origins = { "http://localhost:4200" })
-public class UserController {
+public class SaleController {
+    
 
-    private final UserService userService;
+    @Autowired
+    private SaleService saleService;
 
+    @Autowired
+    private UserRepository userRepository;
 
+    @Autowired
+    private SaleMapper saleMapper;
+
+    @Autowired
+    private SaleDetailMapper saleDetailMapper;
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<SaleResponse>> getAllSales() {
+        List<Sale> sales = saleService.getAllSales();
+        List<SaleResponse> responseList = sales.stream()
+            .map(saleMapper::saleToSaleResponse)
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(responseList);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/{saleId}")
+    public ResponseEntity<List<SaleDetailResponse>> getSaleDetails(@PathVariable Integer saleId) {
+        List<SaleDetailResponse> saleDetail = saleService.getSaleDetailsById(saleId);
+        return ResponseEntity.ok(saleDetail);
     }
 
-    /* ---------------------- */
+    @PostMapping("/create")
+    public ResponseEntity<SaleResponse> createSale(@RequestBody SaleRequest saleDTO) {
+    User user = userRepository.findById(saleDTO.getUserId())
+        .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    
+    Sale sale = saleService.createSale(user, saleDTO.getSaleDetails());
+    SaleResponse response = saleMapper.saleToSaleResponse(sale);
 
-    @GetMapping(value = "{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Integer id) {
-        UserDTO userDTO = userService.getUser(id);
-        if (userDTO == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(userDTO);
-    }
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+}
 
-    @PutMapping(value = "{id}")
-    public ResponseEntity<UserResponse> updateUser(@RequestBody UserRequest userRequest) {
-        return ResponseEntity.ok(userService.updateUser(userRequest));
-    }
-
-
-    @GetMapping("/{id}/cart")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable Integer id) {
-        Cart cart = userService.getCartByUserId(id);
-        return ResponseEntity.ok(cart);
-    }
-
-
-    @GetMapping("/export.xlsx")
+@GetMapping("/export.xlsx")
     public ResponseEntity<byte[]> exportSaleData() {
     try (Workbook workbook = new XSSFWorkbook()) {
-        Sheet sheet = workbook.createSheet("Usuarios");
+        Sheet sheet = workbook.createSheet("Ventas");
 
         // Título
         Row titleRow = sheet.createRow(0);
         Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("Lista de Usuarios");
+        titleCell.setCellValue("Lista de Ventas de Productos");
 
         // Estilo del título
         CellStyle titleStyle = workbook.createCellStyle();
@@ -102,7 +109,7 @@ public class UserController {
 
         // Aplicar el estilo al título y fusionar celdas
         titleCell.setCellStyle(titleStyle);
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 6)); // Fusiona desde la columna 0 a la columna 9
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4)); // Fusiona desde la columna 0 a la columna 9
 
         // Estilo para el encabezado
         CellStyle headerStyle = workbook.createCellStyle();
@@ -133,7 +140,7 @@ public class UserController {
         currencyStyle.setDataFormat(workbook.createDataFormat().getFormat("$#,##0.00"));
 
         // Encabezados
-        String[] headers = {"ID", "Correo", "DNI", "Nombre Completo", "Dirección", "Número Celular", "Permisos"};
+        String[] headers = {"ID", "ID Usuario", "Fecha Venta", "Total", "Estado"};
         Row headerRow = sheet.createRow(1); // Mover el encabezado a la fila 1, debajo del título
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
@@ -143,38 +150,31 @@ public class UserController {
         }
 
         // Datos
-        List<UserDTO> users = userService.getAllUsers();
+        List<Sale> sales = saleService.getAllSales();
         int rowIndex = 2; // Comienza en la fila 2, después del título y el encabezado
-        for (UserDTO user : users) {
+        for (Sale sale : sales) {
             Row row = sheet.createRow(rowIndex++);
 
             Cell cellId = row.createCell(0);
-            cellId.setCellValue(user.getId());
+            cellId.setCellValue(sale.getIdSale());
             cellId.setCellStyle(dataStyle);
 
             Cell cellName = row.createCell(1);
-            cellName.setCellValue(user.getUsername());
+            cellName.setCellValue(sale.getUser().getId());
             cellName.setCellStyle(dataStyle);
 
             Cell cellBrand = row.createCell(2);
-            cellBrand.setCellValue(user.getDni());
+            cellBrand.setCellValue(sale.getSaleDate());
             cellBrand.setCellStyle(dataStyle);
 
             Cell cellDescription = row.createCell(3);
-            cellDescription.setCellValue(user.getFullName());
+            cellDescription.setCellValue(sale.getTotalAmount().doubleValue());
             cellDescription.setCellStyle(dataStyle);
 
             Cell cellPrice = row.createCell(4);
-            cellPrice.setCellValue(user.getAddress());
+            cellPrice.setCellValue(sale.getSaleStatus());
             cellPrice.setCellStyle(currencyStyle);
 
-            Cell cellPhone = row.createCell(5);
-            cellPhone.setCellValue(user.getPhoneNumber());
-            cellPhone.setCellStyle(currencyStyle);
-            
-            Cell cellRole = row.createCell(6);
-            cellRole.setCellValue(user.getRole());
-            cellRole.setCellStyle(currencyStyle);
         }
 
         // Ajustar ancho de columnas manualmente en caso de que autoSizeColumn no sea suficiente

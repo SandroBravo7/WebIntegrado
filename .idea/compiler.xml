@@ -19,6 +19,9 @@
         <module name="luaspets" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="luaspets" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

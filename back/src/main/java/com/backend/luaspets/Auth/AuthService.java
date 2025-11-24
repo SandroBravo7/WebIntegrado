@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.backend.luaspets.Jwt.JwtService;
-import com.backend.luaspets.Model.Cart;
+import com.backend.luaspets.persistence.Model.Cart;
 import com.backend.luaspets.User.Role;
 import com.backend.luaspets.User.User;
 import com.backend.luaspets.User.UserRepository;
