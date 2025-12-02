@@ -1,146 +1,103 @@
-.servicios {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('/IMG/servicios.png');
+.blog-header {
+  background-color: var(--primary);
+  color: white;
+  padding: 4rem 0;
+  text-align: center;
+  background-image: linear-gradient(rgba(236, 64, 122, 0.9), rgba(216, 27, 96, 0.9)), url('/assets/images/servicios.png');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
+}
+
+.blog-header h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.blog-header p {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.blog-content {
+  padding: 4rem 0;
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.blog-card {
+  padding: 0;
+  /* Override default card padding */
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 50px 0;
-
+  height: 100%;
 }
 
-.servicios h1 {
-  color: white;
-  padding-left: 80px;
-  padding-right: 80px;
-  text-align: center;
-  margin-top: 25px;
-  font-size: 48px;
-  font-weight: 600;
-}
-
-.servicios h2 {
-  color: white;
-  text-align: center;
-  margin-top: 25px;
-  margin-bottom: 35px;
-  padding-left: 100px;
-  padding-right: 100px;
-  max-width: 1200px;
-  font-size: 21px;
-  font-weight: 300;
-}
-
-.services-cards {
-  width: 100%;
-  max-width: 1200px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 30px;
-}
-
-.row.last-row {
-  justify-content: center;
-  /* Centrar las dos tarjetas en la última fila */
-}
-
-.col {
-  flex: 1;
-  max-width: 32%;
-  /* Ajusta el tamaño de las tarjetas */
-  margin: 10px;
-}
-
-.service-card {
-  height: 470px;
-  text-align: justify;
-  padding: 20px;
-  background-color: transparent;
-  border: 1px double #fff;
-  width: 100%;
-  border-radius: 25px;
-}
-
-.service-card img {
-  width: 100%;
-  /* Asegura que la imagen ocupe el ancho completo de la tarjeta */
+.card-image {
+  position: relative;
   height: 200px;
-  /* Mantiene la proporción de la imagen */
-  border-radius: 25px;
 }
 
-.service-card h3 {
-  margin: 15px 0;
-  text-align: left;
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.boton {
-  text-align: right; /* Alinear el contenido del botón a la derecha */
+.category-tag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--primary);
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 
-
-.boton a{
-  width: 130px;
-  display: inline-block;
-  background: #fcd873;
-  text-align: center;
-  color: black;
-  padding: 8px 0px;
-  text-decoration: none;
-  font-weight: 400px;
-  text-transform: uppercase;
-  font-size: 12px;
-  border-radius: 5px;
-  box-shadow: 0 8px 32px rgba(85, 83, 75, 0.46);
-  margin-top: 10px;
+.card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
-.boton a:hover{
-  background: white;
-  color: black;
+.card-body h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-main);
 }
 
-.service-card p {
-  font-size: 16px;
-  text-align: left;
-  line-height: 1.4;
-  color: white;
+.card-body p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
 }
 
-/* Mantener tamaño de las últimas dos tarjetas */
-.last-row-card {
-  max-width: 32%;
-  /* Asegura que las tarjetas de la última fila no crezcan */
+.read-more {
+  color: var(--primary);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: auto;
 }
 
-/* Ajustes responsivos para una card por fila */
-@media (max-width: 920px) {
-  .row {
-      flex-direction: column;
-      /* Forzar una card por fila */
-      align-items: center;
-  }
+.read-more:hover {
+  text-decoration: underline;
+}
 
-  .col {
-      max-width: 400px;
-      /* Hacer que cada card ocupe el 100% del ancho */
-      margin: 20px 0;
-      /* Agregar algo de separación vertical */
-  }
-
-  .last-row-card {
-      max-width: 400px;
-      /* Mantener el tamaño en una fila en pantallas pequeñas */
+@media (max-width: 768px) {
+  .blog-grid {
+    grid-template-columns: 1fr;
   }
 }

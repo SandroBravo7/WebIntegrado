@@ -20,7 +20,7 @@ export class UsersComponent implements OnInit {
   selectedUser: User | null = null;
   userForm: FormGroup;
   showAddForm: boolean = false;
-  errorMessage: string = ''; 
+  errorMessage: string = '';
 
   constructor(private userService: UserService, private router: Router, private formBuilder: FormBuilder) {
     // Inicializar el formulario para editar usuarios
@@ -30,13 +30,13 @@ export class UsersComponent implements OnInit {
       password: ['', Validators.required],
       fullName: ['', Validators.required],
       dni: [
-        '', 
-        [Validators.required, Validators.pattern('^[0-9]+$')]
+        '',
+        [Validators.required, Validators.pattern('^[0-9]+$'), Validators.minLength(7), Validators.maxLength(7)]
       ],
       address: ['', Validators.required],
       phoneNumber: [
-        '', 
-        [Validators.required, Validators.pattern('^[0-9]+$')]
+        '',
+        [Validators.required, Validators.pattern('^[0-9]+$'), Validators.minLength(9), Validators.maxLength(9)]
       ],
       role: [null], // Puedes usar un enum o una lista de roles
     });
@@ -74,7 +74,7 @@ export class UsersComponent implements OnInit {
         error: (err) => {
           console.error('Error al registrar el usuario:', err);
         }
-    });
+      });
     }
   }
 
@@ -84,7 +84,7 @@ export class UsersComponent implements OnInit {
     this.showAddForm = false;
   }
 
-  deleteUser (id: number | undefined): void {
+  deleteUser(id: number | undefined): void {
     if (id !== undefined) {
       this.userService.deleteUser(id).subscribe({
         next: () => this.loadUsers(),
@@ -93,7 +93,7 @@ export class UsersComponent implements OnInit {
     }
   }
 
-  cancel(){
+  cancel() {
     this.resetForm();
     this.showAddForm = false;
   }
@@ -129,5 +129,5 @@ export class UsersComponent implements OnInit {
       window.URL.revokeObjectURL(url);
     });
   }
-  
+
 }

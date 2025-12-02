@@ -2,9 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { FooterComponent } from 'src/app/shared/footer/footer.component';
-import { HeaderComponent } from 'src/app/shared/header/header.component';
-import { NavComponent } from 'src/app/shared/nav/nav.component';
 import { AppointmentService } from 'src/app/services/appointment/appointment.service';
 import { PetService } from 'src/app/services/pet/pet.service';
 import { ServiceService } from 'src/app/services/service/service.service';
@@ -16,7 +13,7 @@ import { AppointmentRequest } from 'src/app/models/appointment-request.model';
 @Component({
   selector: 'app-appointment',
   standalone: true,
-  imports: [NavComponent, HeaderComponent, FooterComponent, CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.css'
 })

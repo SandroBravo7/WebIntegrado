@@ -5,22 +5,23 @@ import { jwtDecode } from 'jwt-decode';
 import { LoginService } from 'src/app/services/auth/login.service';
 
 @Component({
-    selector: 'app-nav',
-    templateUrl: './nav.component.html',
-    styleUrls: ['./nav.component.css'],
-    standalone: true,
-    imports: [RouterLink, RouterLinkActive, NgIf]
+  selector: 'app-nav',
+  templateUrl: './nav.component.html',
+  styleUrls: ['./nav.component.css'],
+  standalone: true,
+  imports: [RouterLink, RouterLinkActive, NgIf]
 })
 export class NavComponent implements OnInit {
-  userLoginOn:boolean=false;
-  isAdmin: boolean = false; 
-  constructor(private loginService:LoginService, private router:Router) { }
+  userLoginOn: boolean = false;
+  isAdmin: boolean = false;
+
+  constructor(private loginService: LoginService, private router: Router) { }
 
   ngOnInit(): void {
     this.loginService.currentUserLoginOn.subscribe(
       {
-        next:(userLoginOn) => {
-          this.userLoginOn=userLoginOn;
+        next: (userLoginOn) => {
+          this.userLoginOn = userLoginOn;
           this.checkAdminRole();
         }
       }
@@ -28,7 +29,7 @@ export class NavComponent implements OnInit {
 
     this.checkAdminRole();
   }
-  
+
   checkAdminRole(): void {
     const token = localStorage.getItem('token');
     if (token) {
@@ -44,8 +45,7 @@ export class NavComponent implements OnInit {
     }
   }
 
-  logout()
-  {
+  logout() {
     this.loginService.logout();
     this.router.navigate(['/iniciar-sesion'])
   }

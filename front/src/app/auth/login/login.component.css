@@ -3,11 +3,11 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+  font-family: var(--font-sans);
 }
 
 body {
-  background: linear-gradient(to top, #b06fdb, #98d0e6);
+  background: linear-gradient(to top, var(--light), #ffeef2);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -25,8 +25,8 @@ body {
 }
 
 form {
-  border: 2px solid #000;
-  box-shadow: 5px 5px 0 #000;
+  border: none;
+  box-shadow: var(--shadow-xl);
   width: 28em;
   min-height: 42em;
   background: white;
@@ -35,7 +35,7 @@ form {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 0.5em;
+  border-radius: var(--radius-lg);
 }
 
 /* logotipo */
@@ -49,7 +49,7 @@ form label {
   display: block;
   width: 100%;
   font-weight: 600;
-  color: black;
+  color: var(--text-main);
   margin-top: 1em;
 }
 
@@ -58,20 +58,21 @@ form input {
   width: 100%;
   font-size: 1em;
   font-weight: 400;
-  color: black;
+  color: var(--text-main);
   padding: 0.5em;
   border: none;
-  border-bottom: 0.12em solid black;
+  border-bottom: 2px solid var(--text-muted);
   outline: none;
   margin-bottom: 0.5em;
+  transition: border-color 0.3s;
 }
 
 form input:focus {
-  border-color: rgb(176, 147, 197);
+  border-color: var(--primary);
 }
 
 .error-message {
-  color: red;
+  color: var(--danger);
   font-size: 0.9em;
   margin-top: 0.3em;
   margin-bottom: 1em;
@@ -84,17 +85,20 @@ form button {
   border: none;
   cursor: pointer;
   outline: none;
-  background-color: rgb(176, 147, 197);
-  color: black;
+  background-color: var(--primary);
+  color: white;
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 0.15em;
   margin-top: 1.2em;
-  transition: 0.5s;
+  transition: 0.3s;
+  box-shadow: var(--shadow-md);
 }
 
 form button:hover {
-  background-color: rgb(176, 147, 197);
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .register-link {
@@ -103,7 +107,7 @@ form button:hover {
 }
 
 .register-link a {
-  color: rgb(0, 255, 149);
+  color: var(--secondary);
   font-size: 1em;
   text-decoration: none;
   font-weight: 600;
@@ -111,4 +115,5 @@ form button:hover {
 
 .register-link a:hover {
   text-decoration: underline;
+  color: var(--primary);
 }

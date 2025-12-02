@@ -1,41 +1,41 @@
 .appointment-container {
   min-height: calc(100vh - 200px);
   padding: 40px 20px;
-  background: linear-gradient(to bottom, #f5f5f5, #ffffff);
+  background: linear-gradient(to bottom, var(--light), #ffffff);
 }
 
 .appointment-content {
   max-width: 800px;
   margin: 0 auto;
   background: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   padding: 40px;
 }
 
 .appointment-title {
   text-align: center;
   font-size: 2.5rem;
-  font-family: "Raleway", sans-serif;
-  color: #333;
+  font-family: var(--font-sans);
+  color: var(--text-main);
   margin-bottom: 10px;
 }
 
 .appointment-title i {
-  color: #b06fdb;
+  color: var(--primary);
   margin-right: 10px;
 }
 
 .appointment-subtitle {
   text-align: center;
-  color: #666;
+  color: var(--text-muted);
   font-size: 1.1rem;
   margin-bottom: 30px;
 }
 
 .alert {
   padding: 15px 20px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   margin-bottom: 25px;
   display: flex;
   align-items: center;
@@ -45,13 +45,13 @@
 
 .alert-error {
   background-color: #fee;
-  color: #c33;
+  color: var(--danger);
   border: 1px solid #fcc;
 }
 
 .alert-success {
   background-color: #efe;
-  color: #3c3;
+  color: var(--secondary);
   border: 1px solid #cfc;
 }
 
@@ -72,7 +72,7 @@
 
 .form-label {
   font-weight: 600;
-  color: #333;
+  color: var(--text-main);
   margin-bottom: 8px;
   font-size: 1rem;
   display: flex;
@@ -81,28 +81,28 @@
 }
 
 .form-label i {
-  color: #b06fdb;
+  color: var(--primary);
 }
 
 .form-control {
   width: 100%;
   padding: 12px 15px;
   border: 2px solid #ddd;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 1rem;
   transition: all 0.3s ease;
   background-color: #fff;
-  color: #333;
+  color: var(--text-main);
 }
 
 .form-control:focus {
   outline: none;
-  border-color: #b06fdb;
-  box-shadow: 0 0 0 3px rgba(176, 111, 219, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(236, 64, 122, 0.1);
 }
 
 .form-control.invalid {
-  border-color: #c33;
+  border-color: var(--danger);
 }
 
 .form-control option {
@@ -110,7 +110,7 @@
 }
 
 .error-message {
-  color: #c33;
+  color: var(--danger);
   font-size: 0.9rem;
   margin-top: 5px;
   padding-left: 5px;
@@ -120,15 +120,15 @@
 .service-info {
   margin-top: 10px;
   padding: 12px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid #b06fdb;
+  background-color: var(--light);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--primary);
 }
 
 .pet-info p,
 .service-info p {
   margin: 5px 0;
-  color: #555;
+  color: var(--text-muted);
   font-size: 0.95rem;
 }
 
@@ -143,7 +143,7 @@
 .btn {
   padding: 14px 30px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -156,14 +156,14 @@
 }
 
 .btn-primary {
-  background-color: #b06fdb;
+  background-color: var(--primary);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #9a5bc4;
+  background-color: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(176, 111, 219, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-secondary {
@@ -185,8 +185,8 @@
   margin-top: 30px;
   padding: 20px;
   background-color: #e7f3ff;
-  border-radius: 8px;
-  border-left: 4px solid #2196F3;
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--secondary);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -194,16 +194,16 @@
 
 .info-box i {
   font-size: 1.5rem;
-  color: #2196F3;
+  color: var(--secondary);
 }
 
 .info-box p {
   margin: 0;
-  color: #555;
+  color: var(--text-muted);
 }
 
 .info-box a {
-  color: #b06fdb;
+  color: var(--primary);
   text-decoration: none;
   font-weight: 600;
 }
@@ -231,4 +231,3 @@
     justify-content: center;
   }
 }
-

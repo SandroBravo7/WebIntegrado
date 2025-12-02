@@ -1,8 +1,8 @@
 header {
-    display: grid;
-    grid-template-columns: 70% 30%;
-    background-color: #f992df;
-    /* background-color: rgb(255, 224, 229); */
+  display: grid;
+  grid-template-columns: 70% 30%;
+  background-color: var(--light);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 header .principal {
@@ -22,22 +22,33 @@ header .principal .eslogan {
 }
 
 header .principal p {
-    font-size: 20px;
-    font-family: "Merienda", cursive;
-  }
+  font-size: 20px;
+  font-family: var(--font-sans);
+  color: var(--text-main);
+  font-weight: 500;
+}
 
 header .principal .eslogan a {
   display: inline-block;
-  background: white;
+  background: var(--primary);
   width: 160px;
-  box-shadow: 5px 5px 0 #000;
-  border: 2px solid #000;
+  box-shadow: var(--shadow-md);
+  border: none;
+  border-radius: var(--radius-md);
   text-transform: uppercase;
   font-size: 13px;
   text-align: center;
-  padding: 10px 2px;
+  padding: 12px 2px;
   text-decoration: none;
-  color: black;
+  color: white;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+header .principal .eslogan a:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 header .principal .logo {
@@ -48,19 +59,20 @@ header .principal .logo img {
   height: 100%;
 }
 
-header .buttons{
-   margin-top: 20px;
-   display: flex;
-   justify-content: flex-end;
-   padding-right: 40px;
+header .buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 40px;
 }
 
-header .buttons{
-    display: flex;
-    gap: 50px;
+header .buttons {
+  display: flex;
+  gap: 50px;
 }
 
-header .btn-login, header .btn-cart {
+header .btn-login,
+header .btn-cart {
   align-items: center;
   text-align: center;
 }
