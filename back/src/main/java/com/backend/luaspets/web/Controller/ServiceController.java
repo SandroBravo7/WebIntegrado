@@ -38,7 +38,7 @@ import com.backend.luaspets.domain.Services.ServiceService;
 
 @RestController
 @RequestMapping("/services")
-@CrossOrigin(origins = { "http://localhost:4200" })
+@CrossOrigin(origins = "*")
 public class ServiceController {
     
     private final ServiceService servicesService;

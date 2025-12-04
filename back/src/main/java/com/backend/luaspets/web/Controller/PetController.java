@@ -40,7 +40,7 @@ import com.backend.luaspets.persistence.mapper.PetMapper;
 
 @RestController
 @RequestMapping("/pets")
-@CrossOrigin(origins = { "http://localhost:4200" })
+@CrossOrigin(origins = "*")
 public class PetController {
     
     @Autowired

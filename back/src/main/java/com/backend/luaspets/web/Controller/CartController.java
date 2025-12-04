@@ -23,7 +23,7 @@ import com.backend.luaspets.domain.Services.CartService;
 
 @RestController
 @RequestMapping("/api/cart")
-@CrossOrigin(origins = { "http://localhost:4200" })
+@CrossOrigin(origins = "*")
 public class CartController {
 
     @Autowired

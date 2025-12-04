@@ -43,7 +43,7 @@ import com.backend.luaspets.persistence.mapper.SaleDetailMapper;
 
 @RestController
 @RequestMapping("/sales")
-@CrossOrigin(origins = { "http://localhost:4200" })
+@CrossOrigin(origins = "*")
 public class SaleController {
     
 
