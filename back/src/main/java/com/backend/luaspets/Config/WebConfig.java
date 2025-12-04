@@ -10,7 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                // USAMOS PATTERNS EN LUGAR DE ORIGINS PARA PERMITIR TODO SIN ERROR
+                // USO DE  PATTERNS EN LUGAR DE ORIGINS PARA PERMITIR TODO SIN ERROR
                 .allowedOriginPatterns("*") 
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
