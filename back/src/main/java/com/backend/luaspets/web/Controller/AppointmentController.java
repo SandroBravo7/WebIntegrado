@@ -42,7 +42,7 @@ import com.backend.luaspets.persistence.mapper.AppointmentMapper;
 
 @RestController
 @RequestMapping("/appointments")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class AppointmentController {
 
    @Autowired

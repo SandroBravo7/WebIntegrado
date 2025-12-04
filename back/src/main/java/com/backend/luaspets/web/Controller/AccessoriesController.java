@@ -38,7 +38,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/accessories")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class AccessoriesController {
 
     private final AccessoriesService accessoriesService;

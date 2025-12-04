@@ -43,7 +43,7 @@ import com.backend.luaspets.persistence.mapper.SaleDetailMapper;
 
 @RestController
 @RequestMapping("/sales")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class SaleController {
     
 
