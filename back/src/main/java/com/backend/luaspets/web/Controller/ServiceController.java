@@ -37,7 +37,7 @@ import com.backend.luaspets.persistence.Model.Services;
 import com.backend.luaspets.domain.Services.ServiceService;
 
 @RestController
-@RequestMapping("/services")
+@RequestMapping("/api/v1/services")
 //@CrossOrigin(origins = "*")
 public class ServiceController {
     

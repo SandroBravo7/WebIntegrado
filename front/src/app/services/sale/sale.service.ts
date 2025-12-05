@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class SaleService {
-  private apiUrl = `${environment.urlHost}sales`;
+  private apiUrl = environment.urlApi + 'sales';
 
   constructor(private http: HttpClient) {}
 
@@ -41,7 +41,7 @@ export class SaleService {
    // Crear una orden de PayPal en el backend
    createPaypalOrder(totalAmount: number): Observable<any> {
     const orderData = { totalAmount: totalAmount };
-    return this.http.post<any>(`${environment.urlHost}/api/paypal/create-order`, orderData);
+    return this.http.post<any>(`${environment.urlApi}paypal/create-order`, orderData);
   }
 
   // Capturar la orden de PayPal después de la aprobación

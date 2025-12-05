@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 })
 export class PetService {
 
-  private baseUrl = environment.urlHost + 'pets'; 
+  private baseUrl = environment.urlApi + 'pets';
 
   constructor(private http: HttpClient) {}
 

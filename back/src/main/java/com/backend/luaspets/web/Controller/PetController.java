@@ -39,7 +39,7 @@ import com.backend.luaspets.domain.Services.PetService;
 import com.backend.luaspets.persistence.mapper.PetMapper;
 
 @RestController
-@RequestMapping("/pets")
+@RequestMapping("/api/v1/pets")
 //@CrossOrigin(origins = "*")
 public class PetController {
     

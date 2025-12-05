@@ -41,7 +41,7 @@ import com.backend.luaspets.persistence.mapper.AppointmentMapper;
 
 
 @RestController
-@RequestMapping("/appointments")
+@RequestMapping("/api/v1/appointments")
 //@CrossOrigin(origins = "*")
 public class AppointmentController {
 
@@ -91,7 +91,7 @@ public class AppointmentController {
  /* excel */
     /* excel */
 @GetMapping("/export.xlsx")
-public ResponseEntity<byte[]> exportFoodDXD() {
+public ResponseEntity<byte[]> exportAppointmentData() {
     try (Workbook workbook = new XSSFWorkbook()) {
         // Creación de la hoja de trabajo llamada "Citas"
         Sheet sheet = workbook.createSheet("Citas");
@@ -183,7 +183,7 @@ public ResponseEntity<byte[]> exportFoodDXD() {
             // Columna Fecha (formateada como moneda, si es necesario)
             Cell cellPrice = row.createCell(4);
             cellPrice.setCellValue(appointment.getAppointmentDate());
-            cellPrice.setCellStyle(currencyStyle);
+            cellPrice.setCellStyle(dataStyle);
 
             // Columna Hora inicio
             Cell cellStock = row.createCell(5);

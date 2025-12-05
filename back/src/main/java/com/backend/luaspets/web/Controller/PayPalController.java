@@ -14,7 +14,7 @@ import com.backend.luaspets.domain.Services.PayPalService;
 
 @Controller
 @RestController
-@RequestMapping("/api/paypal")
+@RequestMapping("/api/v1/paypal")
 //@CrossOrigin(origins = "*")
 public class PayPalController {
 

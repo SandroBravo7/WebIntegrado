@@ -22,7 +22,7 @@ import com.backend.luaspets.Request.CartItemRequest;
 import com.backend.luaspets.domain.Services.CartService;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/api/v1/cart")
 //@CrossOrigin(origins = "*")
 public class CartController {
 

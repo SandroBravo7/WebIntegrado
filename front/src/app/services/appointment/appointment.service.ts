@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 })
 export class AppointmentService {
 
-  private baseUrl = environment.urlHost + 'appointments';
+  private baseUrl = environment.urlApi + 'appointments';
 
   constructor(private http: HttpClient) {}
 
