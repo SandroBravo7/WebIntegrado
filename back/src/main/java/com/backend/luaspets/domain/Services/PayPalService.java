@@ -35,8 +35,8 @@ public class PayPalService {
         ApplicationContext applicationContext = new ApplicationContext()
                 .brandName("LuasPets")
                 .landingPage("BILLING")
-                .cancelUrl("https://luaspets.netlify.app/cancel")
-                .returnUrl("https://luaspets.netlify.app/success");
+                .cancelUrl("https://incredible-banoffee-fada24.netlify.app/cancel")
+                .returnUrl("https://incredible-banoffee-fada24.netlify.app/success");
 
         orderRequest.applicationContext(applicationContext);
 
