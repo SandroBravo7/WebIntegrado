@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Cart } from 'src/app/models/cart.model';
 import { CartItem } from 'src/app/models/cartItem.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
 
-  private baseUrl = 'http://localhost:8080/api/cart'; // URL base de la API
+  private baseUrl = environment.urlHost + 'cart';
 
   constructor(private http: HttpClient) {}
 

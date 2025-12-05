@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Service } from 'src/app/models/service.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ServiceService {
 
-  private baseUrl = 'http://localhost:8080/services'; // URL base del controlador backend
+  private baseUrl = environment.urlHost + 'services';
 
   constructor(private http: HttpClient) {}
 

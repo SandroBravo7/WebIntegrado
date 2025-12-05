@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class PaypalService {
-  private baseUrl = 'http://localhost:8080/api/paypal';
+  private baseUrl = environment.urlApi + 'paypal';
 
   constructor(private http: HttpClient) {}
 

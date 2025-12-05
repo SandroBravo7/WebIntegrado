@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Appointment } from 'src/app/models/appointment.model';
 import { AppointmentRequest } from 'src/app/models/appointment-request.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppointmentService {
 
-  private baseUrl = 'http://localhost:8080/appointments';
+  private baseUrl = environment.urlHost + 'appointments';
 
   constructor(private http: HttpClient) {}
 
