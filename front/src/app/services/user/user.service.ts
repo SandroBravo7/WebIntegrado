@@ -40,6 +40,10 @@ export class UserService {
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(environment.urlApi + "user/" + id)
   }
+
+  getCartByUserId(userId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${userId}/cart`);
+  }
  
    // Descargar el archivo Excel
    downloadExcel(): Observable<Blob> {
