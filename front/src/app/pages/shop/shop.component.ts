@@ -11,11 +11,12 @@ import { MedicineService } from 'src/app/services/medicine/medicine.service';
 import { FooterComponent } from 'src/app/shared/footer/footer.component';
 import { HeaderComponent } from 'src/app/shared/header/header.component';
 import { NavComponent } from 'src/app/shared/nav/nav.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-shop',
   standalone: true,
-  imports: [CommonModule, NavComponent, HeaderComponent, FooterComponent],
+  imports: [CommonModule, NavComponent, HeaderComponent, FooterComponent, RouterLink],
   templateUrl: './shop.component.html',
   styleUrl: './shop.component.css'
 })

@@ -5,13 +5,14 @@ import { NgIf } from '@angular/common';
 import { NavComponent } from '../../shared/nav/nav.component';
 import { HeaderComponent } from 'src/app/shared/header/header.component';
 import { FooterComponent } from 'src/app/shared/footer/footer.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.css'],
     standalone: true,
-    imports: [NavComponent, NgIf, PersonalDetailsComponent, HeaderComponent, FooterComponent]
+    imports: [RouterLink, NavComponent, NgIf, PersonalDetailsComponent, HeaderComponent, FooterComponent]
 })
 export class DashboardComponent implements OnInit {
   userLoginOn:boolean=false;
