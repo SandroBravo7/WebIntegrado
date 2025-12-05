@@ -34,7 +34,7 @@ export class AppointmentComponent implements OnInit {
       appointmentDate: ['', Validators.required],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
-      status: ['', Validators.required],
+      status: ['PENDIENTE'],
     });
   }
 
@@ -51,6 +51,16 @@ export class AppointmentComponent implements OnInit {
         console.error('Error al cargar las mascotas:', error);
       }
     );
+  }
+
+  showAddAppointmentForm(): void {
+    this.showAddForm = true;
+    this.selectedAppointment = null;
+    
+    // Al resetear, forzamos que el status vuelva a ser PENDIENTE
+    this.appointmentForm.reset({
+      status: 'PENDIENTE'
+    });
   }
 
   editAppointment(appointment: Appointment): void {
@@ -79,40 +89,54 @@ export class AppointmentComponent implements OnInit {
   }
 
   saveAppointment(): void {
-    if (this.appointmentForm.invalid) return;
+    if (this.appointmentForm.invalid) {
+      console.warn('⚠️ El formulario es inválido. Buscando el culpable...');
+      Object.keys(this.appointmentForm.controls).forEach(key => {
+        if (this.appointmentForm.get(key)?.errors) {
+          console.error(`🔴 Campo inválido: ${key}`, this.appointmentForm.get(key)?.errors);
+        }
+      });
+      alert('Faltan datos obligatorios. Revisa la consola (F12).');
+      return;
+    }
 
-    const appointmentData = this.appointmentForm.value;
+    const formValue = this.appointmentForm.value;
+    const appointmentData = {
+      ...formValue,
+      userId: Number(formValue.userId),
+      serviceId: Number(formValue.serviceId),
+      petId: Number(formValue.petId),
+      // Aseguramos que status no vaya null
+      status: formValue.status || 'PENDIENTE'
+    };
+
+    console.log('📤 Enviando al backend:', appointmentData);
 
     if (this.selectedAppointment) {
       this.appointmentService
         .updateAppointment(this.selectedAppointment.id, appointmentData)
         .subscribe(
           () => {
+            alert('Cita actualizada');
             this.loadAppointments();
             this.cancel();
           },
-          (error) => {
-            console.error('Error al actualizar la mascota:', error);
-          }
+          (error) => console.error('Error al actualizar:', error)
         );
     } else {
+      // CREAR
       this.appointmentService.createAppointment(appointmentData).subscribe(
         () => {
+          alert('Cita creada exitosamente');
           this.loadAppointments();
           this.cancel();
         },
         (error) => {
-          console.error('Error al agregar la mascota:', error);
+          console.error('Error al crear:', error);
+          alert('Hubo un error al crear la cita. Mira la consola.');
         }
       );
     }
-
-    
   }
 
-  showAddAppointmentForm(): void {
-    this.showAddForm = true;
-    this.selectedAppointment = null;
-    this.appointmentForm.reset();
-  }
 }
