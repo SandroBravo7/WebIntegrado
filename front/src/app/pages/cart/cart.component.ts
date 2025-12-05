@@ -10,6 +10,7 @@ import { SaleService } from 'src/app/services/sale/sale.service';
 import { FooterComponent } from 'src/app/shared/footer/footer.component';
 import { HeaderComponent } from 'src/app/shared/header/header.component';
 import { NavComponent } from 'src/app/shared/nav/nav.component';
+import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-cart',
@@ -23,17 +24,30 @@ export class CartComponent implements OnInit {
   cartId!: number;
   sales: Sale[] = [];
 
-  constructor( private cartService: CartService, private loginService: LoginService, private saleService: SaleService, private paypalService: PaypalService) {}
+  constructor( private cartService: CartService, private loginService: LoginService, private saleService: SaleService, private paypalService: PaypalService, private userService: UserService) {}
 
   ngOnInit(): void {
-     const userId = this.loginService.userId;// Obtén el userId desde LoginService
-    if (userId) {
-      this.cartId = parseInt(userId, 10);
-      this.loadCartItems();
-    } else {
-      console.error('Usuario no autenticado');
-    }
+  const userIdStr = this.loginService.userId;
+  
+  if (userIdStr) {
+    const userId = parseInt(userIdStr, 10);
+    
+    // PASO 1: Obtener el carrito asociado al usuario
+    this.userService.getCartByUserId(userId).subscribe({
+      next: (cart) => {
+        // PASO 2: Guardar el ID REAL del carrito
+        this.cartId = cart.id; 
+        console.log('Carrito encontrado ID:', this.cartId);
+        
+        // PASO 3: Ahora sí, cargar los productos de ese carrito
+        this.loadCartItems();
+      },
+      error: (err) => console.error('Error al obtener el carrito del usuario', err)
+    });
+  } else {
+    console.error('Usuario no autenticado');
   }
+}
 
   // Cargar los productos del carrito desde el servicio
   loadCartItems(): void {
